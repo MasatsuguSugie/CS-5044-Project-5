@@ -1,0 +1,30 @@
+package adventure;
+
+/**
+ * This is the inventory command. It displays all currently held items in the players inventory.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class InventoryCommand
+    extends Command
+{
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+
+        if (myPlayer.getAllItemNames().length != 0)
+        {
+            return ("<p>You are carrying the "
+                + (Message.commaSeparatedList(myPlayer.getAllItemNames()) + (".")));
+        }
+
+        return Message.inventoryEmptyMessage();
+
+    }
+
+}
