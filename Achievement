@@ -1,0 +1,44 @@
+package adventure;
+
+/**
+ * This is the enum of achievement the player must achieve to progress through the game.
+ * 
+ * @author sugie
+ * @version 8 Nov 2018
+ */
+public enum Achievement
+
+{
+    /**
+     * This is the ate enum of achievement.
+     */
+    ATE,
+    /**
+     * This is the locked enum of achievement.
+     */
+    LOCKED,
+    /**
+     * This is the took enum of achievement.
+     */
+    TOOK,
+    /**
+     * This is the push enum of achievement.
+     */
+    PUSHED,
+    /**
+     * This is the read enum of achievement.
+     */
+    READ,
+    /**
+     * This is the use enum of achievement.
+     */
+    USED,
+    /**
+     * This is the ate artifact enum of achievement.
+     */
+    ATEARTIFACT,
+    /**
+     * This is the launch button enum of achievement.
+     */
+    LAUNCH,
+}
