@@ -1,0 +1,44 @@
+package adventure;
+
+/**
+ * This is the eat command class. This is called when a player wants to eat an item in their
+ * inventory.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class EatCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+        if (myPlayer.hasItem("peanut-butter"))
+        {
+            Item item = myPlayer.getItem(itemName);
+            myPlayer.removeItem(item);
+            myPlayer.addAchievement(Achievement.ATE);
+            return Message.eatSuccessMessage(itemName);
+        }
+        else if (myPlayer.hasItem("artifact"))
+        {
+            Item item = myPlayer.getItem(itemName);
+            myPlayer.removeItem(item);
+            myPlayer.addAchievement(Achievement.ATEARTIFACT);
+            return Message.eatArtifactSuccessMessage(itemName);
+        }
+        else if (myPlayer.hasItem(itemName))
+        {
+            return Message.eatNotEdibleMessage(itemName);
+        }
+        return Message.dontHaveMessage(itemName);
+
+    }
+
+}
