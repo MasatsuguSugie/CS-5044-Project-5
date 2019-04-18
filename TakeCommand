@@ -1,0 +1,62 @@
+package adventure;
+
+/**
+ * This is the take command. An item can be taken from a room with this command.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class TakeCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+
+        if (currentRoom.hasItem(itemName) && !itemName.equals("button")
+            && !itemName.equals("launch-button") && !itemName.equals("space-shuttle"))
+        {
+            Item roomItem = currentRoom.getItem(itemName);
+            if (itemName.equals("bicycle") && myPlayer.hasAchievement(Achievement.LOCKED))
+            {
+                return Message.takeLockedMessage(itemName);
+            }
+            else if (!myPlayer.canCarry(roomItem))
+            {
+                return Message.takeNotEnoughRoomMessage(itemName);
+            }
+            else if (itemName.equals("ruby"))
+            {
+                myPlayer.addItem(roomItem);
+                currentRoom.removeItem(roomItem);
+                myPlayer.addAchievement(Achievement.TOOK);
+                return Message.takeSuccessMessage(itemName);
+            }
+            else
+            {
+                myPlayer.addItem(roomItem);
+                currentRoom.removeItem(roomItem);
+                return Message.takeSuccessMessage(itemName);
+            }
+
+        }
+        else if (myPlayer.hasItem(itemName))
+        {
+            return Message.takeAlreadyHaveMessage(itemName);
+        }
+        else if (!currentRoom.hasItem(itemName))
+        {
+            return Message.cantSeeMessage(itemName);
+        }
+        return Message.cantTakeMessage();
+
+    }
+
+}
