@@ -1,0 +1,45 @@
+package adventure;
+
+/**
+ * This is the lock command class. This locks an item.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class LockCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+
+        if (currentRoom.hasItem(itemName) && itemName.equals("bicycle")
+            && !myPlayer.hasAchievement(Achievement.LOCKED))
+        {
+            myPlayer.addAchievement(Achievement.LOCKED);
+            return Message.lockSuccessMessage(itemName);
+
+        }
+        else if (myPlayer.hasItem("bicycle"))
+        {
+            return Message.lockPutDownMessage(itemName);
+        }
+        else if (!itemName.equals("bicycle"))
+        {
+            return Message.lockNotPossibleMessage(itemName);
+        }
+        else if (myPlayer.hasAchievement(Achievement.LOCKED))
+        {
+            return Message.alreadyLockedBikeMessage();
+        }
+        return Message.cantSeeMessage(itemName);
+    }
+
+}
