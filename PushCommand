@@ -1,0 +1,51 @@
+package adventure;
+
+/**
+ * This is the push command class. An item can be pushed when this is called.
+ * 
+ * @author mjohn
+ * @version Nov 1, 2018
+ */
+public class PushCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
+        String itemName = getSecondWord();
+
+        if (currentRoom.hasItem(itemName) && !itemName.equals("button")
+            && !itemName.equals("launch-button") && !itemName.equals("space-shuttle"))
+        {
+            return Message.pushMessage(itemName);
+        }
+        else if (currentRoom.hasItem(itemName) && itemName.equals("button"))
+        {
+            if (!myPlayer.hasAchievement(Achievement.PUSHED))
+            {
+                myPlayer.addAchievement(Achievement.PUSHED);
+            }
+            return Message.pushButtonMessage(itemName);
+        }
+        else if (currentRoom.hasItem(itemName) && itemName.equals("launch-button"))
+        {
+            if (!myPlayer.hasAchievement(Achievement.LAUNCH))
+            {
+                myPlayer.addAchievement(Achievement.LAUNCH);
+            }
+            return Message.pushLaunchButtonMessage(itemName) + "<p>" + Message.youWinMessage();
+        }
+        else if (itemName.equals("space-shuttle"))
+        {
+            return Message.cantPushMessage(itemName);
+        }
+        return Message.cantSeeMessage(itemName);
+    }
+
+}
