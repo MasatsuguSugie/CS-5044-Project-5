@@ -1,0 +1,138 @@
+package adventure;
+
+/**
+ * This is my game class. This extends the game class.
+ * 
+ * @author Sugie
+ * @version 25 Oct 2018
+ */
+
+public class MyGame
+    extends Game
+{
+    /**
+     * Create a new MyGame object.
+     */
+    public MyGame()
+    {
+        super(new EnhancedPlayer(null), new Parser());
+    }
+
+
+    /**
+     * This is a constructor.
+     * 
+     * @param args
+     *            to be used to create a new game.
+     */
+    public static void main(String[] args)
+    {
+        Game game = new MyGame();
+        game.play();
+    }
+
+
+    @Override
+    public void createCommands()
+    {
+        CommandWords commands = parser().commandWords();
+        commands.addCommand("go", new EnhancedGoCommand());
+        commands.addCommand("south", new EnhancedGoCommand("south"));
+        commands.addCommand("north", new EnhancedGoCommand("north"));
+        commands.addCommand("east", new EnhancedGoCommand("east"));
+        commands.addCommand("west", new EnhancedGoCommand("west"));
+        commands.addCommand("s", new EnhancedGoCommand("south"));
+        commands.addCommand("n", new EnhancedGoCommand("north"));
+        commands.addCommand("e", new EnhancedGoCommand("east"));
+        commands.addCommand("w", new EnhancedGoCommand("west"));
+        commands.addCommand("up", new EnhancedGoCommand("up"));
+        commands.addCommand("down", new EnhancedGoCommand("down"));
+        commands.addCommand("u", new EnhancedGoCommand("up"));
+        commands.addCommand("d", new EnhancedGoCommand("down"));
+        commands.addCommand("help", new HelpCommand(commands));
+        commands.addCommand("quit", new QuitCommand());
+        commands.addCommand("examine", new ExamineCommand());
+        commands.addCommand("x", new ExamineCommand());
+        commands.addCommand("take", new TakeCommand());
+        commands.addCommand("inventory", new InventoryCommand());
+        commands.addCommand("i", new InventoryCommand());
+        commands.addCommand("drop", new DropCommand());
+        commands.addCommand("eat", new EatCommand());
+        commands.addCommand("lock", new LockCommand());
+        commands.addCommand("push", new PushCommand());
+        commands.addCommand("use", new UseCommand());
+        commands.addCommand("read", new ReadCommand());
+    }
+
+
+    @Override
+    public void createRooms()
+    {
+        EnhancedRoom livingRoom = new EnhancedRoom("in your living room");
+        EnhancedRoom kitchen = new EnhancedRoom("in your kitchen");
+        EnhancedRoom bedroom = new EnhancedRoom("in your bedroom");
+        EnhancedRoom outsideApartment = new EnhancedRoom("outside your apartment");
+        EnhancedRoom airlock = new EnhancedRoom("in the airlock");
+        EnhancedRoom holodeck = new EnhancedRoom("in the holodeck");
+        EnhancedRoom armory = new EnhancedRoom("in the armory");
+        EnhancedRoom captainsQuarters = new EnhancedRoom("in the Captains Quarters");
+        EnhancedRoom shuttleBay = new EnhancedRoom("in the shuttle bay");
+        EnhancedRoom laboratory = new EnhancedRoom("in the laboratory");
+        EnhancedRoom escapePod = new EnhancedRoom("in the escape pod");
+
+        livingRoom.setExit("east", kitchen);
+        livingRoom.setExit("west", bedroom);
+        livingRoom.setExit("south", outsideApartment);
+        kitchen.setExit("west", livingRoom);
+        bedroom.setExit("east", livingRoom);
+        outsideApartment.setExit("north", livingRoom);
+        outsideApartment.setExit("south", airlock);
+        outsideApartment.setExit("east", holodeck);
+        outsideApartment.setExit("west", armory);
+        airlock.setExit("north", outsideApartment);
+        airlock.setExit("south", shuttleBay);
+        shuttleBay.setExit("north", airlock);
+        shuttleBay.setExit("south", escapePod);
+        holodeck.setExit("west", outsideApartment);
+        holodeck.setExit("south", captainsQuarters);
+        captainsQuarters.setExit("north", holodeck);
+        armory.setExit("east", outsideApartment);
+        armory.setExit("west", laboratory);
+        laboratory.setExit("east", armory);
+
+        Item ruby = new Item("ruby", Message.rubyDescriptionMessage(), 1);
+        bedroom.addItem(ruby);
+        Item sapphire = new Item("sapphire", Message.examineDefaultMessage("sapphire"), 1);
+        bedroom.addItem(sapphire);
+        Item bicycle = new Item("bicycle", Message.bicycleDescriptionMessage(), 10);
+        livingRoom.addItem(bicycle);
+        Item peanutButter = new Item("peanut-butter", Message.peanutButterDescriptionMessage(), 1);
+        kitchen.addItem(peanutButter);
+        Item button = new Item("button", Message.buttonDescriptionMessage(), 11);
+        airlock.addItem(button);
+        Item captainsLog = new Item("captains-log", Message.captainsLogDescriptionMessage(), 1);
+        captainsQuarters.addItem(captainsLog);
+        Item blaster = new Item("blaster", Message.blasterDescriptionMessage(), 1);
+        armory.addItem(blaster);
+        Item artifact = new Item("artifact", Message.artifactDescriptionMessage(), 1);
+        laboratory.addItem(artifact);
+        Item spaceShuttle = new Item("space-shuttle", Message.spaceShuttleDescriptionMessage(), 11);
+        shuttleBay.addItem(spaceShuttle);
+        Item spacesuit = new Item("spacesuit", Message.spacesuitDescriptionMessage(), 1);
+        shuttleBay.addItem(spacesuit);
+        Item holodeckPlayer = new Item("holodeck-player", Message.holodeckDescriptionMessage(), 1);
+        holodeck.addItem(holodeckPlayer);
+        Item launchButton = new Item("launch-button", Message.launchButtonDescriptionMessage(), 1);
+        escapePod.addItem(launchButton);
+
+        player().setCurrentRoom(livingRoom);
+    }
+
+
+    @Override
+    public String welcomeMessage()
+    {
+        return "<p>Welcome to The World of the Future!</p>" + "<p>Type 'help' if you need help.</p>"
+            + "<p>Hit [return] to continue...</p>";
+    }
+}
