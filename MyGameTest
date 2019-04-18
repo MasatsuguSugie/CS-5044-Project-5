@@ -1,0 +1,655 @@
+package adventure;
+
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+// CHECKSTYLE:OFF
+@SuppressWarnings("javadoc")
+public class MyGameTest
+{
+
+    private String message;
+    private String roomDesc;
+    private String longDesc;
+    private Game   game;
+
+
+    public MyGameTest()
+    {
+    }
+
+
+    @Before
+    public void setUp()
+    {
+        game = new MyGame();
+        game.createCommands();
+        game.createRooms();
+    }
+
+
+    @Test
+    public void testInit()
+    {
+        roomDesc = game.player().getCurrentRoom().getShortDescription();
+        assertEquals("in your living room", roomDesc);
+    }
+
+
+    @Test
+    public void testBicycleNotEnoughRoom()
+    {
+        executeMoves("take bicycle");
+        assertEquals(Message.takeSuccessMessage("bicycle"), message);
+        executeMoves("west", "take ruby");
+        assertEquals(Message.takeNotEnoughRoomMessage("ruby"), message);
+    }
+
+
+    @Test
+    public void testTakeAchievements()
+    {
+        executeMoves("west", "take ruby");
+        assertEquals("in your bedroom", roomDesc);
+        assertEquals(Message.takeSuccessMessage("ruby"), message);
+        executeMoves("take ruby");
+        assertEquals(Message.takeAlreadyHaveMessage("ruby"), message);
+    }
+
+
+    @Test
+    public void testEatAchievements()
+    {
+        executeMoves("east", "take peanut-butter");
+        executeMoves("eat peanut-butter");
+        assertEquals("in your kitchen", roomDesc);
+        assertEquals(Message.eatSuccessMessage("peanut-butter"), message);
+        executeMoves("eat peanut-butter");
+        assertEquals(Message.dontHaveMessage("peanut-butter"), message);
+
+    }
+
+
+    @Test
+    public void testTakeButton()
+    {
+        testSouth();
+        executeMoves("south", "take button");
+        assertEquals(Message.cantTakeMessage(), message);
+        executeMoves("south", "take space-shuttle");
+        assertEquals(Message.cantTakeMessage(), message);
+    }
+
+
+    @Test
+    public void testLockAchievements()
+    {
+        executeMoves("lock bicycle");
+        assertEquals("in your living room", roomDesc);
+        assertEquals(Message.lockSuccessMessage("bicycle"), message);
+        executeMoves("lock bicycle");
+        assertEquals(Message.alreadyLockedBikeMessage(), message);
+        executeMoves("take bicycle");
+        assertEquals(Message.takeLockedMessage("bicycle"), message);
+    }
+
+
+    @Test
+    public void testObjectLockedSecurely()
+    {
+        testLockAchievements();
+        executeMoves("examine bicycle");
+        assertEquals(Message.objectIsLockedMessage("bicycle"), message);
+    }
+
+
+    @Test
+    public void testGoSouthWithoutEatingPB()
+    {
+        testTakeAchievements();
+        executeMoves("east");
+        testLockAchievements();
+        executeMoves("go south");
+        assertEquals(Message.exitWithoutEatingPBMessage(), message);
+    }
+
+
+    @Test
+    public void testGoSouthWithoutTakingRuby()
+    {
+        testEatAchievements();
+        executeMoves("west");
+        testLockAchievements();
+        executeMoves("go south");
+        assertEquals(Message.exitWithoutTakingRubyMessage(), message);
+    }
+
+
+    @Test
+    public void testGoSouthWithoutLockingBike()
+    {
+        testEatAchievements();
+        executeMoves("west");
+        executeMoves("west");
+        testTakeAchievements();
+        executeMoves("east");
+        executeMoves("go south");
+        assertEquals(Message.exitWithoutLockingBikeMessage(), message);
+    }
+
+
+    @Test
+    public void testSouth()
+    {
+        testTakeAchievements();
+        executeMoves("east");
+        testEatAchievements();
+        executeMoves("west");
+        testLockAchievements();
+        executeMoves("south");
+        assertEquals("outside your apartment", roomDesc);
+    }
+
+
+    @Test
+    public void testSouthAfterDropRuby()
+    {
+        testTakeAchievements();
+        executeMoves("east");
+        testEatAchievements();
+        executeMoves("west");
+        testLockAchievements();
+        executeMoves("drop ruby");
+        executeMoves("south");
+        assertEquals(Message.exitWithoutTakingRubyMessage(), message);
+    }
+
+
+    @Test
+    public void testAllTheWaySouth()
+    {
+        testSouth();
+        executeMoves("south", "south", "south");
+        assertEquals(Message.exitWithoutPushingButtonMessage(), message);
+    }
+
+
+    @Test
+    public void testInventoryEmpty()
+    {
+        executeMoves("i");
+        assertEquals(Message.inventoryEmptyMessage(), message);
+    }
+
+
+    @Test
+    public void testNullGetItem()
+    {
+        assertNull(((EnhancedPlayer)game.player()).getItem("not-an-item"));
+        assertNull(((EnhancedRoom)game.player().getCurrentRoom()).getItem("not-an-item"));
+    }
+
+
+    @Test
+    public void testMainDummy()
+    {
+        MyGame.main(new String[0]);
+    }
+
+
+    @Test
+    public void testMessageClassDummy()
+    {
+        assertNotNull(new Message());
+    }
+
+
+    @Test
+    public void testWelcomeMessage()
+    {
+        assertTrue(new MyGame().welcomeMessage().startsWith("<p>Welcome"));
+    }
+
+
+    @Test
+    public void testGetNullFromRoom()
+    {
+        testSouth();
+        executeMoves("take blaster");
+        assertEquals(Message.cantSeeMessage("blaster"), message);
+    }
+
+
+    @Test
+    public void testExamineBlaster()
+    {
+        testSouth();
+        executeMoves("west");
+        executeMoves("examine blaster");
+        assertEquals("in the armory", roomDesc);
+        assertEquals(Message.blasterDescriptionMessage(), message);
+        assertTrue(longDesc.contains("blaster"));
+    }
+
+
+    @Test
+    public void testDropBlaster()
+    {
+        testUsedBlasterAchievement();
+        executeMoves("drop blaster");
+        assertEquals(Message.dropSuccessMessage("blaster"), message);
+        executeMoves("drop blaster");
+        assertEquals(Message.dontHaveMessage("blaster"), message);
+        executeMoves("eat artifact");
+        assertEquals(Message.dontHaveMessage("artifact"), message);
+    }
+
+
+    @Test
+    public void testExamineArtifact()
+    {
+        testSouth();
+        executeMoves("west", "west", "examine artifact");
+        assertEquals(Message.artifactDescriptionMessage(), message);
+        assertEquals("in the laboratory", roomDesc);
+    }
+
+
+    @Test
+    public void testCantUseCantSee()
+    {
+        executeMoves("examine bicycle");
+        assertEquals("in your living room", roomDesc);
+        assertEquals(Message.bicycleDescriptionMessage(), message);
+        assertTrue(longDesc.contains("bicycle"));
+        executeMoves("use bicycle");
+        assertEquals(Message.cantUseMessage("bicycle"), message);
+        executeMoves("use blaster");
+        assertEquals(Message.cantSeeMessage("blaster"), message);
+    }
+
+
+    @Test
+    public void testUsedBlasterAchievement()
+    {
+        testExamineBlaster();
+        executeMoves("take blaster");
+        assertEquals(Message.takeSuccessMessage("blaster"), message);
+        executeMoves("use blaster");
+        assertEquals(Message.useBlasterMessage("blaster"), message);
+        executeMoves("eat blaster");
+        assertEquals(Message.eatNotEdibleMessage("blaster"), message);
+        executeMoves("use blaster");
+        assertEquals(Message.useBlasterMessage("blaster"), message);
+        executeMoves("read blaster");
+        assertEquals(Message.cantReadMessage("blaster"), message);
+    }
+
+
+    @Test
+    public void testReadCaptainsLogAchievement()
+    {
+        testSouth();
+        executeMoves("east", "south", "examine captains-log");
+        assertEquals(Message.captainsLogDescriptionMessage(), message);
+        assertEquals("in the Captains Quarters", roomDesc);
+        executeMoves("take captains-log", "read captains-log");
+        assertEquals(Message.readLogMessage(), message);
+        executeMoves("read captains-log");
+        assertEquals(Message.readLogMessage(), message);
+    }
+
+
+    @Test
+    public void testEatArtifactAchievement()
+    {
+        testExamineArtifact();
+        executeMoves("take artifact");
+        assertEquals("in the laboratory", roomDesc);
+        assertEquals(Message.takeSuccessMessage("artifact"), message);
+        executeMoves("read artifact");
+        assertEquals(Message.readArtifactMessage(), message);
+        executeMoves("eat artifact");
+        assertEquals(Message.eatArtifactSuccessMessage("artifact"), message);
+        executeMoves("eat artifact");
+        assertEquals(Message.dontHaveMessage("artifact"), message);
+    }
+
+
+    @Test
+    public void testExamineTakeSpacesuit()
+    {
+        testSouth();
+        executeMoves("south", "south", "examine spacesuit");
+        assertEquals(Message.spacesuitDescriptionMessage(), message);
+        executeMoves("push spacesuit");
+        assertEquals(Message.pushMessage("spacesuit"), message);
+        executeMoves("take spacesuit");
+        assertEquals(Message.takeSuccessMessage("spacesuit"), message);
+        executeMoves("eat spacesuit");
+        assertEquals(Message.eatNotEdibleMessage("spacesuit"), message);
+        executeMoves("use spacesuit");
+        assertEquals(Message.cantUseMessage("spacesuit"), message);
+        executeMoves("read spacesuit");
+        assertEquals(Message.cantReadMessage("spacesuit"), message);
+        executeMoves("drop spacesuit");
+        assertEquals(Message.dropSuccessMessage("spacesuit"), message);
+        executeMoves("lock spacesuit");
+        assertEquals(Message.lockNotPossibleMessage("spacesuit"), message);
+    }
+
+
+    @Test
+    public void testExamineTakeSpaceShuttle()
+    {
+        testSouth();
+        executeMoves("south", "south", "examine space-shuttle");
+        assertEquals(Message.spaceShuttleDescriptionMessage(), message);
+        executeMoves("push space-shuttle");
+        assertEquals(Message.cantPushMessage("space-shuttle"), message);
+        executeMoves("take space-shuttle");
+        assertEquals(Message.cantTakeMessage(), message);
+        executeMoves("eat space-shuttle");
+        assertEquals(Message.dontHaveMessage("space-shuttle"), message);
+        executeMoves("use space-shuttle");
+        assertEquals(Message.cantUseMessage("space-shuttle"), message);
+        executeMoves("read space-shuttle");
+        assertEquals(Message.dontHaveMessage("space-shuttle"), message);
+        executeMoves("drop space-shuttle");
+        assertEquals(Message.dropDontHaveMessage("space-shuttle"), message);
+        executeMoves("lock space-shuttle");
+        assertEquals(Message.lockNotPossibleMessage("space-shuttle"), message);
+    }
+
+
+    @Test
+    public void testExamineTakeHolodeck()
+    {
+        testSouth();
+        executeMoves("east", "examine holodeck-player");
+        assertEquals(Message.holodeckDescriptionMessage(), message);
+        executeMoves("take holodeck-player");
+        assertEquals(Message.takeSuccessMessage("holodeck-player"), message);
+    }
+
+
+    @Test
+    public void testPushedButtonAchievement()
+    {
+        testSouth();
+        executeMoves("south", "push button");
+        assertEquals("in the airlock", roomDesc);
+        assertEquals(Message.pushButtonMessage("button"), message);
+        executeMoves("push button");
+        assertEquals(Message.pushButtonMessage("button"), message);
+    }
+
+
+    @Test
+    public void testWinGame()
+    {
+        testReadCaptainsLogAchievement();
+        executeMoves("north", "west", "west", "take blaster", "use blaster");
+        assertEquals("in the armory", roomDesc);
+        executeMoves("west", "take artifact", "eat artifact");
+        assertEquals("in the laboratory", roomDesc);
+        executeMoves("east", "east", "south", "push button");
+        assertEquals("in the airlock", roomDesc);
+        executeMoves("south");
+        executeMoves("west");
+        executeMoves("south");
+        assertEquals("in the escape pod", roomDesc);
+        executeMoves("i");
+        executeMoves("take launch-button");
+        assertEquals(Message.cantTakeMessage(), message);
+        executeMoves("push launch-button");
+        assertEquals(
+            Message.pushLaunchButtonMessage("launch-button") + "<p>" + Message.youWinMessage(),
+            message);
+        executeMoves("push launch-button");
+        assertEquals(
+            Message.pushLaunchButtonMessage("launch-button") + "<p>" + Message.youWinMessage(),
+            message);
+    }
+
+
+    @Test
+    public void testUnPushable()
+    {
+        testPushedButtonAchievement();
+        executeMoves("south", "push space-shuttle");
+        assertEquals(Message.cantPushMessage("space-shuttle"), message);
+        executeMoves("push ruby");
+        assertEquals(Message.cantSeeMessage("ruby"), message);
+    }
+
+
+    @Test
+    public void testWinGameWithoutUsedAchievement()
+    {
+        testReadCaptainsLogAchievement();
+        executeMoves("north", "west", "west", "west");
+        assertEquals("in the laboratory", roomDesc);
+        executeMoves("take artifact", "eat artifact");
+        executeMoves("east", "east", "south");
+        executeMoves("push button");
+        executeMoves("south", "south");
+        assertEquals(Message.exitWithoutUsingBlasterMessage(), message);
+    }
+
+
+    @Test
+    public void testWinGameWithoutReadAchievement()
+    {
+        testEatArtifactAchievement();
+        executeMoves("east", "take blaster", "use blaster");
+        executeMoves("east", "south");
+        executeMoves("push button");
+        executeMoves("south", "south");
+        assertEquals(Message.exitWithoutReadingCaptainsLogMessage(), message);
+    }
+
+
+    @Test
+    public void testWinGameWithoutPushAchievement()
+    {
+        testReadCaptainsLogAchievement();
+        executeMoves("north", "west", "west", "west");
+        assertEquals("in the laboratory", roomDesc);
+        executeMoves("take artifact", "eat artifact");
+        executeMoves("east", "take blaster", "use blaster");
+        executeMoves("east", "south");
+        executeMoves("south", "south");
+        assertEquals(Message.exitWithoutPushingButtonMessage(), message);
+    }
+
+
+    @Test
+    public void testWinGameWithoutEatArtifactAchievement()
+    {
+        testReadCaptainsLogAchievement();
+        executeMoves("north", "west", "west");
+        executeMoves("take blaster", "use blaster");
+        executeMoves("east", "south");
+        executeMoves("push button");
+        executeMoves("south", "south");
+        assertEquals(Message.exitWithoutEatingArtifactMessage(), message);
+    }
+
+
+    @Test
+    public void testGoEast()
+    {
+        executeMoves("go east");
+        assertEquals("in your kitchen", roomDesc);
+    }
+
+
+    @Test
+    public void testEast()
+    {
+        executeMoves("go east");
+        assertEquals("in your kitchen", roomDesc);
+    }
+
+
+    @Test
+    public void testGoWest()
+    {
+        executeMoves("go west");
+        assertEquals("in your bedroom", roomDesc);
+    }
+
+
+    @Test
+    public void testWest()
+    {
+        executeMoves("go west");
+        assertEquals("in your bedroom", roomDesc);
+        executeMoves("west");
+        assertEquals(Message.noExitInDirectionMessage(), message);
+    }
+
+
+    @Test
+    public void testBicycleInLivingRoomDescription()
+    {
+        executeMoves();
+        assertTrue(longDesc.contains("bicycle"));
+    }
+
+
+    @Test
+    public void testExamineBicycle()
+    {
+        executeMoves("examine bicycle");
+        assertEquals("in your living room", roomDesc);
+        assertEquals(Message.bicycleDescriptionMessage(), message);
+        assertTrue(longDesc.contains("bicycle"));
+    }
+
+
+    @Test
+    public void testLockPutDownLockNotPossible()
+    {
+        executeMoves("take bicycle", "lock bicycle");
+        assertEquals(Message.lockPutDownMessage("bicycle"), message);
+        executeMoves("drop bicycle", "west", "lock ruby");
+        assertEquals(Message.lockNotPossibleMessage("ruby"), message);
+        executeMoves("lock bicycle");
+        assertEquals(Message.cantSeeMessage("bicycle"), message);
+    }
+
+
+    @Test
+    public void testExamineWithRubySapphirePeanutButter()
+    {
+        executeMoves("west", "examine ruby");
+        assertEquals("in your bedroom", roomDesc);
+        assertEquals(Message.rubyDescriptionMessage(), message);
+        assertTrue(longDesc.contains("ruby"));
+        executeMoves("take sapphire", "examine sapphire");
+        assertEquals(Message.examineDefaultMessage("sapphire"), message);
+        executeMoves("examine peanut-butter");
+        assertEquals(Message.cantSeeMessage("peanut-butter"), message);
+    }
+
+
+    @Test
+    public void testExaminePeanutButter()
+    {
+        executeMoves("east", "examine peanut-butter");
+        assertEquals("in your kitchen", roomDesc);
+        assertEquals(Message.peanutButterDescriptionMessage(), message);
+        assertTrue(longDesc.contains("peanut-butter"));
+    }
+
+
+    @Test
+    public void testRubyInBedroomDescription()
+    {
+        executeMoves("west");
+        assertTrue(longDesc.contains("ruby"));
+        executeMoves("push ruby");
+        assertEquals(Message.pushMessage("ruby"), message);
+    }
+
+
+    @Test
+    public void testNothingInInitRoom()
+    {
+        longDesc = game.player().getCurrentRoom().getLongDescription();
+        assertTrue(longDesc.contains("You see"));
+    }
+
+
+    @Test
+    public void testEatPB()
+    {
+        executeMoves("eat PB");
+        assertEquals(Message.dontHaveMessage("PB"), message);
+    }
+
+
+    @Test
+    public void testEatRuby()
+    {
+        executeMoves("eat ruby");
+        assertEquals(Message.dontHaveMessage("ruby"), message);
+    }
+
+
+    @Test
+    public void testTakeRuby()
+    {
+        executeMoves("west", "take ruby");
+        assertEquals("in your bedroom", roomDesc);
+        assertEquals(Message.takeSuccessMessage("ruby"), message);
+    }
+
+
+    @Test
+    public void testPeanutButterInKitchenDescription()
+    {
+        executeMoves("east");
+        assertTrue(longDesc.contains("peanut-butter"));
+    }
+
+
+    @Test
+    public void testEatPeanutButter()
+    {
+        executeMoves("east", "take peanut-butter");
+        assertEquals(Message.takeSuccessMessage("peanut-butter"), message);
+        executeMoves("eat peanut-butter");
+        assertEquals("in your kitchen", roomDesc);
+        assertEquals(Message.eatSuccessMessage("peanut-butter"), message);
+    }
+
+
+    @Test
+    public void testDummyCaseForEnumCoverage()
+    {
+        assertNotNull(Achievement.valueOf(Achievement.ATE.name()));
+        assertNotNull(Achievement.valueOf(Achievement.LOCKED.name()));
+        assertNotNull(Achievement.valueOf(Achievement.TOOK.name()));
+        assertNotNull(Achievement.valueOf(Achievement.PUSHED.name()));
+        assertNotNull(Achievement.valueOf(Achievement.READ.name()));
+        assertNotNull(Achievement.valueOf(Achievement.USED.name()));
+        assertNotNull(Achievement.valueOf(Achievement.ATEARTIFACT.name()));
+        assertNotNull(Achievement.valueOf(Achievement.LAUNCH.name()));
+    }
+
+
+    private void executeMoves(String... inputs)
+    {
+        for (String input : inputs)
+        {
+            Command command = game.parser().getCommand(input);
+            message = command.execute(game.player());
+        }
+        roomDesc = game.player().getCurrentRoom().getShortDescription();
+        longDesc = game.player().getCurrentRoom().getLongDescription();
+    }
+}
