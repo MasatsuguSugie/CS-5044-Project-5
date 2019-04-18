@@ -1,0 +1,41 @@
+package adventure;
+
+/**
+ * This is the read command class. An item in a players inventory can be read with this command.
+ * 
+ * @author sugie
+ * @version 2 Nov 2018
+ */
+public class ReadCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+
+        if (itemName.equals("captains-log"))
+        {
+            if (!myPlayer.hasAchievement(Achievement.READ))
+            {
+                myPlayer.addAchievement(Achievement.READ);
+            }
+            return Message.readLogMessage();
+        }
+        else if (itemName.equals("artifact"))
+        {
+            return Message.readArtifactMessage();
+        }
+        else if (myPlayer.hasItem(itemName))
+        {
+            return Message.cantReadMessage(itemName);
+        }
+        return Message.dontHaveMessage(itemName);
+    }
+
+}
