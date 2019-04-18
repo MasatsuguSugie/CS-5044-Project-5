@@ -1,0 +1,38 @@
+package adventure;
+
+/**
+ * This is the use command class. An item can be used with this class.
+ * 
+ * @author mjohn
+ * @version Nov 1, 2018
+ */
+public class UseCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+
+        if (itemName.equals("blaster"))
+        {
+            if (!myPlayer.hasAchievement(Achievement.USED))
+            {
+                myPlayer.addAchievement(Achievement.USED);
+            }
+            return Message.useBlasterMessage();
+        }
+        else if (!itemName.equals("blaster"))
+        {
+            return Message.cantUseMessage(itemName);
+        }
+
+        return Message.cantSeeMessage(itemName);
+    }
+
+}
