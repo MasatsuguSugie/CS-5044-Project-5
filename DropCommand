@@ -1,0 +1,39 @@
+package adventure;
+
+/**
+ * This is the drop command class. An item in the players inventory is dropped when called.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class DropCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+
+        if (itemName.equals("ruby"))
+        {
+            myPlayer.removeAchievement(Achievement.TOOK);
+        }
+        if (myPlayer.hasItem(itemName))
+        {
+            Item item = myPlayer.getItem(itemName);
+            myPlayer.removeItem(item);
+            currentRoom.addItem(item);
+            return Message.dropSuccessMessage(itemName);
+        }
+
+        return Message.dropDontHaveMessage(itemName);
+
+    }
+
+}
