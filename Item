@@ -1,0 +1,66 @@
+package adventure;
+
+/**
+ * This is the item class. This is a helper that gets the name, description, and weight of an item.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class Item
+{
+    private String name;
+    private String description;
+    private int    weight;
+
+
+    /**
+     * Create a new item object.
+     * 
+     * @param name
+     *            of the item.
+     * @param description
+     *            of the item.
+     * @param weight
+     *            of the item.
+     */
+    public Item(String name, String description, int weight)
+    {
+        super();
+        this.name = name;
+        this.description = description;
+        this.weight = weight;
+    }
+
+
+    /**
+     * Get the current value of name.
+     * 
+     * @return The value of name for this object.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+
+    /**
+     * Get the current value of description.
+     * 
+     * @return The value of description for this object.
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+
+    /**
+     * Get the current value of weight.
+     * 
+     * @return The value of weight for this object.
+     */
+    public int getWeight()
+    {
+        return weight;
+    }
+}
