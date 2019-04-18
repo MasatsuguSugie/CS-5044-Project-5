@@ -1,0 +1,194 @@
+package adventure;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * This is the enhanced player class. This extends the player class to include enum achievements and
+ * has and getters.
+ * 
+ * @author sugie
+ * @version 29 Oct 2018
+ */
+
+public class EnhancedPlayer
+    extends Player
+{
+    private List<Item>       items;
+    private Set<Achievement> achievement;
+
+
+    /**
+     * Create a new EnhancedPlayer object.
+     * 
+     * @param item
+     *            called for the action.
+     */
+    public EnhancedPlayer(Item item)
+    {
+        super();
+        items = new ArrayList<>();
+        achievement = new HashSet<>();
+    }
+
+
+    /**
+     * This adds the achievements to the player.
+     * 
+     * @param achievements
+     *            needed for game progression.
+     */
+    public void addAchievement(Achievement achievements)
+    {
+        achievement.add(achievements);
+    }
+
+
+    /**
+     * This removes an achievement from the player.
+     * 
+     * @param achievements
+     *            needed for game progression.
+     */
+    public void removeAchievement(Achievement achievements)
+    {
+        achievement.remove(achievements);
+    }
+
+
+    /**
+     * This checks if a player has an achievement.
+     * 
+     * @param name
+     *            of the achievement checked.
+     * @return whether a player has an achievement.
+     */
+    public boolean hasAchievement(Enum<Achievement> name)
+    {
+        for (Achievement achievements : achievement)
+        {
+            if (achievements.equals(name))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * This adds an item to the players inventory.
+     * 
+     * @param item
+     *            to be added.
+     */
+    public void addItem(Item item)
+    {
+        items.add(item);
+
+    }
+
+
+    /**
+     * This checks if a player has an item in inventory.
+     * 
+     * @param name
+     *            of item to check if the player has.
+     * @return true or false if player has or doesn't have an item.
+     */
+    public boolean hasItem(String name)
+    {
+        for (Item item : items)
+        {
+            if (name.equals(item.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    /**
+     * This gets the item from the players inventory.
+     * 
+     * @param name
+     *            of item to be gotten.
+     * @return item
+     */
+    public Item getItem(String name)
+    {
+
+        for (Item item : items)
+        {
+            if (name.equals(item.getName()))
+            {
+                return item;
+            }
+        }
+        return null;
+
+    }
+
+
+    /**
+     * This removes an item from the players inventory.
+     * 
+     * @param item
+     *            to be removed from the players inventory.
+     */
+    public void removeItem(Item item)
+    {
+        items.remove(item);
+    }
+
+
+    /**
+     * This gets all the names of all the inventory items.
+     * 
+     * @return names
+     */
+    public String[] getAllItemNames()
+    {
+        String[] itemNames = new String[items.size()];
+        for (int i = 0; i < itemNames.length; i++)
+        {
+            Item item = items.get(i);
+            itemNames[i] = item.getName();
+        }
+        return itemNames;
+    }
+
+
+    /**
+     * This checks if a player can hold the inventory item.
+     * 
+     * @param item
+     *            to be checked if it can be carried.
+     * @return true if a player can carry an item.
+     */
+    public boolean canCarry(Item item)
+    {
+        return weights() < 10;
+    }
+
+
+    /**
+     * This sums the weights of the inventory item .
+     * 
+     * @return true if a player can carry an item.
+     */
+    private int weights()
+    {
+        int sum = 0;
+        for (Item item : items)
+        {
+            sum = sum + item.getWeight();
+        }
+        return sum;
+    }
+
+}
