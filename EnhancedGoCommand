@@ -1,0 +1,97 @@
+package adventure;
+
+/**
+ * This is the enhanced go command class. It extends the go command and enables movement in the
+ * game.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+
+public class EnhancedGoCommand
+    extends GoCommand
+{
+    private String direction;
+
+
+    /**
+     * Create a new EnhancedGoCommand object.
+     * 
+     * @param direction
+     *            of the player.
+     */
+    public EnhancedGoCommand(String direction)
+    {
+        this.direction = direction;
+    }
+
+
+    /**
+     * Create a new EnhancedGoCommand object.
+     */
+    public EnhancedGoCommand()
+    {
+        this.direction = null;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
+        String movementDirection = direction;
+        if (movementDirection != null)
+        {
+            setSecondWord(movementDirection);
+        }
+        else
+        {
+            movementDirection = getSecondWord();
+        }
+        if (currentRoom.getShortDescription().equals("in your living room")
+            && movementDirection.equals("south"))
+        {
+            if (!myPlayer.hasAchievement(Achievement.TOOK))
+            {
+                return Message.exitWithoutTakingRubyMessage();
+            }
+            if (!myPlayer.hasAchievement(Achievement.ATE))
+            {
+                return Message.exitWithoutEatingPBMessage();
+            }
+            if (!myPlayer.hasAchievement(Achievement.LOCKED))
+            {
+                return Message.exitWithoutLockingBikeMessage();
+            }
+
+        }
+        else if (currentRoom.getShortDescription().equals("in the shuttle bay")
+            && movementDirection.equals("south"))
+        {
+            if (!myPlayer.hasAchievement(Achievement.PUSHED))
+            {
+                return Message.exitWithoutPushingButtonMessage();
+            }
+            if (!myPlayer.hasAchievement(Achievement.READ))
+            {
+                return Message.exitWithoutReadingCaptainsLogMessage();
+            }
+            if (!myPlayer.hasAchievement(Achievement.USED))
+            {
+                return Message.exitWithoutUsingBlasterMessage();
+            }
+            if (!myPlayer.hasAchievement(Achievement.ATEARTIFACT))
+            {
+                return Message.exitWithoutEatingArtifactMessage();
+            }
+
+        }
+
+        return super.execute(player);
+
+    }
+}
