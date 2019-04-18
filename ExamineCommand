@@ -1,0 +1,41 @@
+package adventure;
+
+/**
+ * This is the examine command class. It is used to examine an item.
+ * 
+ * @author sugie
+ * @version 25 Oct 2018
+ */
+public class ExamineCommand
+    extends Command
+{
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute(Player player)
+    {
+        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
+        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
+        String itemName = getSecondWord();
+
+        if (itemName.equals("bicycle") && myPlayer.hasAchievement(Achievement.LOCKED))
+        {
+            return Message.objectIsLockedMessage("bicycle");
+        }
+        else if (currentRoom.hasItem(itemName))
+        {
+            Item item = currentRoom.getItem(itemName);
+            return item.getDescription();
+        }
+        else if (myPlayer.hasItem(itemName))
+        {
+            Item item = myPlayer.getItem(itemName);
+            return item.getDescription();
+        }
+        return Message.cantSeeMessage(itemName);
+
+    }
+
+}
