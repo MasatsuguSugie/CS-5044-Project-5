@@ -1,45 +1,648 @@
 package adventure;
 
+import java.util.List;
+
 /**
- * This is the lock command class. This locks an item.
- * 
- * @author sugie
- * @version 25 Oct 2018
+ * Message file for the adventure game. These methods generate standardized messages that should be
+ * used whenever applicable for compatibility with the automated grading system. You may add new
+ * messages to this file, but please don't modify any of the existing message.
+ *
+ * @author Sugie
+ * @version 1.2
  */
-public class LockCommand
-    extends Command
+public class Message
 {
 
     /**
-     * {@inheritDoc}
+     * Description of the peanut butter.
+     * 
+     * @return description of peanut butter
      */
-    @Override
-    public String execute(Player player)
+    public static final String peanutButterDescriptionMessage()
     {
-        EnhancedRoom currentRoom = (EnhancedRoom)player.getCurrentRoom();
-        EnhancedPlayer myPlayer = (EnhancedPlayer)player;
-        String itemName = getSecondWord();
-
-        if (currentRoom.hasItem(itemName) && itemName.equals("bicycle")
-            && !myPlayer.hasAchievement(Achievement.LOCKED))
-        {
-            myPlayer.addAchievement(Achievement.LOCKED);
-            return Message.lockSuccessMessage(itemName);
-
-        }
-        else if (myPlayer.hasItem("bicycle"))
-        {
-            return Message.lockPutDownMessage(itemName);
-        }
-        else if (!itemName.equals("bicycle"))
-        {
-            return Message.lockNotPossibleMessage(itemName);
-        }
-        else if (myPlayer.hasAchievement(Achievement.LOCKED))
-        {
-            return Message.alreadyLockedBikeMessage();
-        }
-        return Message.cantSeeMessage(itemName);
+        return "You absolutely love peanut butter!";
     }
 
+
+    /**
+     * Description of the bicycle.
+     * 
+     * @return description of bike
+     */
+    public static final String bicycleDescriptionMessage()
+    {
+        return "You use your bicycle to get to work.";
+    }
+
+
+    /**
+     * Description of the ruby.
+     * 
+     * @return ruby description
+     */
+    public static final String rubyDescriptionMessage()
+    {
+        return "You inherited the precious ruby from your great aunt.";
+    }
+
+
+    /**
+     * Description of the button.
+     * 
+     * @return button description
+     */
+    public static final String buttonDescriptionMessage()
+    {
+        return "This button depressurizes the room and opens the airlock.";
+    }
+
+
+    /**
+     * Description of the captains log.
+     * 
+     * @return captains log description
+     */
+    public static final String captainsLogDescriptionMessage()
+    {
+        return "This is the captains log, Star Date 244.675.";
+    }
+
+
+    /**
+     * Description of the blaster.
+     * 
+     * @return blaster description
+     */
+    public static final String blasterDescriptionMessage()
+    {
+        return "A very dangerous weapon, the Mark IV ''Ronald Raygun''. It's locked and loaded.";
+    }
+
+
+    /**
+     * Description of the artifact.
+     * 
+     * @return artifact description
+     */
+    public static final String artifactDescriptionMessage()
+    {
+        return "An ancient alien artifact. There's a sticker that says something on it.";
+    }
+
+
+    /**
+     * Description of the space shuttle.
+     * 
+     * @return artifact description
+     */
+    public static final String spaceShuttleDescriptionMessage()
+    {
+        return "A space shuttle, a little banged up from what appears to be space dogfight.";
+    }
+
+
+    /**
+     * Description of the spacesuit.
+     * 
+     * @return spacesuit description
+     */
+    public static final String spacesuitDescriptionMessage()
+    {
+        return "A spacesuit. The inside smells musky.";
+    }
+
+
+    /**
+     * Description of the holodeck.
+     * 
+     * @return holodeck description
+     */
+    public static final String holodeckDescriptionMessage()
+    {
+        return "It's a Sony holodeck player, someone forgot to shut theirs off. "
+            + "It's playing through their family vacation, awkward...";
+    }
+
+
+    /**
+     * Description of the launch button.
+     * 
+     * @return launch button description
+     */
+    public static final String launchButtonDescriptionMessage()
+    {
+        return "The launch button for the escape pod.";
+    }
+
+
+    /**
+     * Message when trying to leave before you eat peanut butter.
+     * 
+     * @return exit without eating message
+     */
+    public static final String exitWithoutEatingPBMessage()
+    {
+        return "You don't want to leave your apartment on an empty stomach.";
+    }
+
+
+    /**
+     * Message when trying to leave without locking up bike.
+     * 
+     * @return exit without locking bike message
+     */
+    public static final String exitWithoutLockingBikeMessage()
+    {
+        return "You feel a little uncomfortable leaving your bike unlocked, "
+            + "even though it is inside.";
+    }
+
+
+    /**
+     * Message when trying to leave without taking ruby.
+     * 
+     * @return exit without taking ruby message
+     */
+    public static final String exitWithoutTakingRubyMessage()
+    {
+        return "You feel like you are forgetting something valuable.";
+    }
+
+
+    /**
+     * Message when trying to leave without pushing button.
+     * 
+     * @return exit without pushing button message
+     */
+    public static final String exitWithoutPushingButtonMessage()
+    {
+        return "Don't you wanna try pushing the airlock button!?!? Live a little!!";
+    }
+
+
+    /**
+     * Message when trying to leave without reading captains log.
+     * 
+     * @return exit without reading captains log message
+     */
+    public static final String exitWithoutReadingCaptainsLogMessage()
+    {
+        return "You should read the captains log and find out "
+            + "why there is no one on this star base.";
+    }
+
+
+    /**
+     * Message when trying to leave without using the blaster.
+     * 
+     * @return exit without reading captains log message
+     */
+    public static final String exitWithoutUsingBlasterMessage()
+    {
+        return "Why don't you practice shooting the blaster before you go. "
+            + "There might be scary aliens where you are going.";
+    }
+
+
+    /**
+     * Message when trying to leave without eating the artifact.
+     * 
+     * @return exit without reading captains log message
+     */
+    public static final String exitWithoutEatingArtifactMessage()
+    {
+        return "Don't you think the DO NOT EAT sticker on the artifact "
+            + "was just a suggestion, and not a rule?";
+    }
+
+
+    /**
+     * Message when there is no exit in a particular direction.
+     * 
+     * @return no exit in direction message
+     */
+    public static final String noExitInDirectionMessage()
+    {
+        return "There is no exit in that direction!";
+    }
+
+
+    /**
+     * Message when player has won.
+     * 
+     * @return you win message
+     */
+    public static final String youWinMessage()
+    {
+        return "Congratulations. You won!";
+    }
+
+
+    /**
+     * Message shown when a command is requested on an object, but the object is neither in your
+     * inventory nor in the room. It may or may not exist elsewhere in the game world.
+     * 
+     * @param objName
+     *            second word in command
+     * @return object not visible message
+     */
+    public static final String cantSeeMessage(String objName)
+    {
+        return "You don't see any " + objName + ".";
+    }
+
+
+    /**
+     * Message shown when you need to be holding something, but you are not. For example, you need
+     * to hold something in order to eat it.
+     * 
+     * @param objName
+     *            second word in command
+     * @return not holding the object message
+     */
+    public static final String dontHaveMessage(String objName)
+    {
+        return "You don't have the " + objName + ".";
+    }
+
+
+    /**
+     * Default message when examining something that has an empty description.
+     * 
+     * @param objName
+     *            second word in command
+     * @return default examine message
+     */
+    public static final String examineDefaultMessage(String objName)
+    {
+        return "You don't see anything special about the " + objName + ".";
+    }
+
+
+    /**
+     * Message added to description of an object when it is locked.
+     * 
+     * @param objName
+     *            second word in command
+     * @return object is locked message
+     */
+    public static final String objectIsLockedMessage(String objName)
+    {
+        return "The " + objName + " is locked up securely.";
+    }
+
+
+    /**
+     * Message you get when you try to take a locked object.
+     * 
+     * @param objName
+     *            second word in command
+     * @return can't take locked message
+     */
+    public static final String takeLockedMessage(String objName)
+    {
+        return "You can't take the " + objName + " because it's locked.";
+    }
+
+
+    /**
+     * Message you get when you are holding an item when trying to lock it.
+     * 
+     * @param objName
+     *            name of object
+     * @return drop before locking message
+     */
+    public static final String lockPutDownMessage(String objName)
+    {
+        return "You must put the " + objName + " down before you can lock it.";
+    }
+
+
+    /**
+     * Message you get when you successfully lock an object.
+     * 
+     * @param objName
+     *            name of object
+     * @return lock success message
+     */
+    public static final String lockSuccessMessage(String objName)
+    {
+        return "You locked up the " + objName + ".";
+    }
+
+
+    /**
+     * Message you get when you try to lock something that can't be locked.
+     * 
+     * @param objName
+     *            second word in command
+     * @return can't lock object message
+     */
+    public static final String lockNotPossibleMessage(String objName)
+    {
+        return "You can't lock the " + objName + ".";
+    }
+
+
+    /**
+     * Message when trying to eat something that is not edible.
+     * 
+     * @param objName
+     *            second word in command
+     * @return object not edible message
+     */
+    public static final String eatNotEdibleMessage(String objName)
+    {
+        return "You can't eat the " + objName + ".";
+    }
+
+
+    /**
+     * Message when successfully eating something.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String eatSuccessMessage(String objName)
+    {
+        return "You eat the " + objName + ". Delicious!";
+    }
+
+
+    /**
+     * Message when successfully eating artifact.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String eatArtifactSuccessMessage(String objName)
+    {
+        return "OMG...you ate the " + objName
+            + ". You are flooded with the entire history of the universe. You are now all knowing.";
+    }
+
+
+    /**
+     * Message you get when you don't have enough room in your inventory. In other words, taking
+     * something would result in carrying too much weight.
+     * 
+     * @param objName
+     *            second word in command
+     * @return not enough room in inventory message
+     */
+    public static final String takeNotEnoughRoomMessage(String objName)
+    {
+        return "You don't have enough room in your inventory to take the " + objName + ".";
+    }
+
+
+    /**
+     * Message when you successfully take an object.
+     * 
+     * @param objName
+     *            second word in command
+     * @return take object message
+     */
+    public static final String takeSuccessMessage(String objName)
+    {
+        return "You take the " + objName + ".";
+    }
+
+
+    /**
+     * Message when you successfully drop an object.
+     * 
+     * @param objName
+     *            second word in command
+     * @return drop object message
+     */
+    public static final String dropSuccessMessage(String objName)
+    {
+        return "You dropped the " + objName + ".";
+    }
+
+
+    /**
+     * Message you get when you try to take an object you already have.
+     * 
+     * @param objName
+     *            second word in command
+     * @return already have object message
+     */
+    public static final String takeAlreadyHaveMessage(String objName)
+    {
+        return "You already have the " + objName + ".";
+    }
+
+
+    /**
+     * Message you get when you try to drop something you do not have.
+     * 
+     * @param objName
+     *            second word in command
+     * @return don't have object message
+     */
+    public static final String dropDontHaveMessage(String objName)
+    {
+        return "You don't have the " + objName + ".";
+    }
+
+
+    /**
+     * Message you get when your inventory is empty.
+     * 
+     * @return inventory empty message
+     */
+    public static final String inventoryEmptyMessage()
+    {
+        return "You're not carrying anything.";
+    }
+
+
+    /**
+     * Message you get when you can't take item.
+     * 
+     * @return you can't take that message
+     */
+    public static final String cantTakeMessage()
+    {
+        return "You can't take that!";
+    }
+
+
+    /**
+     * Message you get when you can't use item.
+     * 
+     * @param objName
+     *            that can't be used.
+     * @return you can't use that message
+     */
+    public static final String cantUseMessage(String objName)
+    {
+        return "You can't use the " + objName + "!";
+    }
+
+
+    /**
+     * Message you get when you read the Captains Log.
+     * 
+     * @return you read the captains log
+     */
+    public static final String readLogMessage()
+    {
+        return "You read the captains log. It details the alien attack that occured on "
+            + "this ship while you were in your quarters.";
+    }
+
+
+    /**
+     * Message you get when you read artifact.
+     * 
+     * @return you read the artifact
+     */
+    public static final String readArtifactMessage()
+    {
+        return "You read the artifact. A sticker on it says in big bold letters: DO NOT EAT THIS.";
+    }
+
+
+    /**
+     * Message you get when you can't read item.
+     * 
+     * @param objName
+     *            that is read.
+     * @return you can't read that message
+     */
+    public static final String cantReadMessage(String objName)
+    {
+        return "There is nothing to read on the " + objName + ".";
+    }
+
+
+    /**
+     * Message when successfully blasted something.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String useBlasterMessage()
+    {
+        return "You used the blaster. Now there's a hole in the deck.";
+    }
+
+
+    /**
+     * Message when successfully pushed something.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String pushMessage(String objName)
+    {
+        return "You push the " + objName + " around the room. It just rolls to a stop.";
+    }
+
+
+    /**
+     * Message when successfully pushed the button.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String pushButtonMessage(String objName)
+    {
+        return "You pushed the airlock " + objName
+            + "! The starbase is on a countdown to self-destruction. You better hurry!!";
+    }
+
+
+    /**
+     * Message when successfully pushed the launch button.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String pushLaunchButtonMessage(String objName)
+    {
+        return "You push the " + objName
+            + ". As you fire off into the cosmos, the starbase becomes a distant "
+            + "dot that explodes silently in the dark. Your next stop, the future.";
+    }
+
+
+    /**
+     * Message when unsuccessfully pushed something.
+     * 
+     * @param objName
+     *            second word in command
+     * @return eat object message
+     */
+    public static final String cantPushMessage(String objName)
+    {
+        return "You can't push the " + objName + "!";
+    }
+
+
+    /**
+     * Message when already locked bike.
+     * 
+     * @return eat object message
+     */
+    public static final String alreadyLockedBikeMessage()
+    {
+        return "The bicycle is already locked.";
+    }
+
+
+    /**
+     * This method creates names with articles for items.
+     * 
+     * @param items
+     *            to be used in the list.
+     * @return result
+     */
+    public static final String[] getNamesWithArticles(List<Item> items)
+    {
+        String[] result = new String[items.size()];
+        for (int i = 0; i < result.length; i++)
+        {
+            result[i] = "the " + items.get(i).getName();
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns a comma separated list of the words in the array.
+     * 
+     * @param words
+     *            objects to be separated
+     * @return comma separated list
+     */
+    public static final String commaSeparatedList(String[] words)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < words.length; i++)
+        {
+            if (i == words.length - 1)
+            {
+                sb.append(words[i]);
+            }
+            else if (i == words.length - 2)
+            {
+                sb.append(words[i]).append(" and ");
+            }
+            else
+            {
+                sb.append(words[i]).append(", ");
+            }
+        }
+        return sb.toString();
+    }
 }
